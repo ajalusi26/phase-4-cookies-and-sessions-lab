@@ -7,8 +7,17 @@ class ArticlesController < ApplicationController
   end
 
   def show
+    session[:page_views] ||= 0 
+    session[:page_views] = session[:page_views].to_i + 1
+    cookies[:page_views] = session[:page_views]
+    # console.log(session[:page_views])
     article = Article.find(params[:id])
-    render json: article
+    if session[:page_views] > 3
+      render json: {error: "Maximum pageview limit reached"}, status: 401
+    else
+      render json: article
+    end
+    
   end
 
   private
